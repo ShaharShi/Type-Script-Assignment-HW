@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+
+    <style>
+        .ele-h {
+            height: 50px;
+        }
+        .table-wrap {
+            overflow-x: auto; 
+            height: 500px;
+            margin-bottom: 20px;
+        }
+        .jumbotron {
+            padding: 1em 1em;
+        }
+        label {
+            font-weight: bold;
+            margin-top: 5px;
+        }
+        .ex-btn {
+            display: block;
+            width: 75%;
+            margin: auto;
+            font-size: 0.6em;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="jumbotron">
+            <h1>Product Managment</h1>
+        </div>
+    </div>
+    <div class="form-wrapper container">
+        <form>
+            <div class="form-row">
+                <div class="col">
+                    <label>What Product is that ?</label><br>
+                    <input type="text" class="form-control" id="pName" placeholder="Enter Product Name ...">
+                </div>
+                <div class="col">
+                    <label>What is the Product Price ? </label><br>
+                    <input type="number" class="form-control" id="pPrice" step="0.01">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col">
+                    <label>Product Weight</label><br>
+                    <input type="number" class="form-control" id="pWeight" step="0.01">
+                </div>
+                <div class="col">
+                    <div class="mt-4 text-center">
+                        <label class="badge badge-dark p-2 mt-1"> Is He Kosher ? 
+                        <input type="checkbox" class="ml-2" id="pIsKosher"></label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col">
+                    <label>Manufacturer Name</label><br>
+                    <input type="text" class="form-control" id="pManufacturerName">
+                </div>
+                <div class="col">
+                    <label>Expiration Date</label>
+                    <input type="date" class="form-control" id="pExeDate">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col my-5">
+                    <button type="submit" class="btn btn-primary px-5" id="allProperties"> Add all Properties </button>
+                </div>
+                <div class="col my-5">
+                    <button type="submit" class="btn btn-primary px-5" id="onlyNamePriceBtn"> Add only Name & Price </button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <hr>
+    <div class="table-wrap container p-0 border shadow">
+        <table class="table text-center">
+            <thead class="table-thead thead-light">
+                <tr>
+                    <th>Product Name</th>
+                    <th>Price</th>
+                    <th>Weight</th>
+                    <th>is He Kosher ?</th>
+                    <th>Manufacturer</th>
+                    <th>Expiration Date</th>
+                </tr>
+            </thead>
+            <tbody id="trContainer">
+                <!-- Draw DATA HERE !!! -->
+            </tbody>
+        </table>
+        <h3 id="tableComment" class="text-center mt-5">Add Some Products ...</h3>
+    </div>
+    <hr>
+    <div class="container mb-5">
+        <div class="row">
+            <div class="col">
+                <div class="d-flex flex-column">
+                    <div class="m-auto">
+                        <h5>Price Per Kilo !(Kg)</h5>
+                    </div>
+                    <div class="d-flex m-auto col-6">
+                        <select class="d-inline form-control" id="perKiloOptions">
+                            <!-- Draw Options HERE !!! -->
+                        </select>
+                        <button class="btn btn-primary btn ml-4" id="checkPricePerKilo"> Check</button>
+                    </div>
+                    <div class="text-center mt-3">
+                        <div class="m-auto ele-h" id="perKiloContainer"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="d-flex flex-column pb-5 pt-2">
+                    <div class="m-auto">
+                        <h5>Which Product is More Expensive ?</h5>
+                    </div>
+                    <div class="d-flex m-auto col-8">
+                        <select class="d-inline form-control mr-4" id="moreExOptions1">
+                            <!-- Draw Options HERE !!! -->
+                        </select>
+                        <select class="d-inline form-control" id="moreExOptions2">
+                            <!-- Draw Options HERE !!! -->
+                        </select>
+                        <button class="btn btn-primary btn ml-4" id="checkMoreExpensive"> Check</button>
+                    </div>
+                    <div class="text-center mt-3">
+                        <div class="m-auto ele-h" id="moreExContainer"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="./dist/index.js"></script>
+</body>
+</html>
