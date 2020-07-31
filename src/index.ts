@@ -4,42 +4,51 @@ const optionsContainers = ['perKiloOptions', 'moreExOptions1', 'moreExOptions2']
 
 class FoodProduct {
 
+    public static day_in_milisconds: number = 86400000;
+
     constructor(
         private name: string,
         private price: number,
         private weight: number,
         private isKosher: boolean,
         private manufacturerName: string,
-        private exDate: string) { }
+        private exDate: Date
+    ) { }
 
-    printProduct() {
+    printProduct(): void {
         drawProductInTable(this);
     }
-    printProductNameAndPrice() {
+    printProductNameAndPrice(): void {
         drawOnlyNameAndPrice(this);
     }
-    getPriceForUnit() {
-        const result = this.price / this.weight;
-        drawPriceForUnit(result);
+    getPriceForUnit(): Number {
+        return this.price / this.weight;
     }
-    checkExDate() {
-        const res = checkExpirationDate(this.exDate);
-        res ? alert(res): alert('Date not specified');
+    checkExDate(): void {
+        if(isNaN(this.exDate.valueOf())) return
+        const result = this.exDate.getTime() < new Date().getTime() + FoodProduct.day_in_milisconds
+        result ? alert('The Product Expire') : alert('Product is\'nt Expire');
     }
 
-    getName() { return this.name.length > 0 ? this.name : '---'};
-    getPrice() { return isNaN(this.price) ? '---' : `${this.price} ILS` };
-    getWeight() { return isNaN(this.weight) ? '---' : `${this.weight} Kg`};
-    getIsKosher() { return this.isKosher == true ? 'Yes' : 'No' };
-    getManufacturerName() { return this.manufacturerName.length > 0 ? this.manufacturerName : '---'};
-    getExDate() { return this.exDate.length > 0 ? this.exDate : '---'};
+    getName(): String { return this.name.length > 0 ? this.name : '---'};
+    getPrice(): String { return isNaN(this.price) ? '---' : `${this.price} ILS` };
+    getWeight(): String { return isNaN(this.weight) ? '---' : `${this.weight} Kg`};
+    getIsKosher(): String { return this.isKosher == true ? 'Yes' : 'No' };
+    getManufacturerName(): String { return this.manufacturerName.length > 0 ? this.manufacturerName : '---'};
+    getExDate(): String { return this.exDate.toLocaleDateString()};
+
+    static returnWhosMoreExpensive(productOne: FoodProduct, productTwo: FoodProduct): String {
+        const result = productOne.price > productTwo.price ?  productOne.name : productTwo.name;
+        return result;
+    }
 }
 
 (function() {
-    const checkMoreExpensiveBtn = document.getElementById('checkMoreExpensive');
     const allProperties = document.getElementById('allProperties');
     const onlyNamePriceBtn = document.getElementById('onlyNamePriceBtn');
     const tableComment = document.getElementById('tableComment');
+    const checkMoreExpensiveBtn = document.getElementById('checkMoreExpensive');
+    const checkPricePerKiloBtn = document.getElementById('checkPricePerKilo')
     
     allProperties.addEventListener('click',(e) => {
         e.preventDefault();
@@ -50,21 +59,22 @@ class FoodProduct {
         makeProduct('printProductNameAndPrice', tableComment);
     })
     checkMoreExpensiveBtn.addEventListener('click', () => { checkWhosMoreExpensive() })
+    checkPricePerKiloBtn.addEventListener('click', () => { checkPriceForUnit() })
 })()
 
 function makeProduct(whatToDraw, tableComment) {
-    const pName = document.getElementById('pName').value;
-    const pPrice = document.getElementById('pPrice').valueAsNumber;
-    const pWeight = document.getElementById('pWeight').valueAsNumber;
-    const pIsKosher = document.getElementById('pIsKosher').checked;
-    const pManufacturerName = document.getElementById('pManufacturerName').value;
-    const pExeDate = document.getElementById('pExeDate').value;
+    const pName: HTMLInputElement = document.querySelector('#pName')
+    const pPrice: HTMLInputElement = document.querySelector('#pPrice')
+    const pWeight: HTMLInputElement = document.querySelector('#pWeight')
+    const pIsKosher: HTMLInputElement = document.querySelector('#pIsKosher')
+    const pManufacturerName: HTMLInputElement = document.querySelector('#pManufacturerName')
+    const pExeDate: HTMLInputElement = document.querySelector('#pExeDate')
 
-    if (pName === '' || pName.length === 0) { alert('Insert Product Name !'); return }
+    if (pName.value === '' || pName.value.length === 0) { alert('Insert Product Name !'); return }
     const nameExist = productsArr.find( productObj => productObj.name === pName )
     if (nameExist) { alert('The Product name already exist !'); return }
-    
-    const product = new FoodProduct(pName, pPrice, pWeight, pIsKosher, pManufacturerName, pExeDate);
+
+    const product = new FoodProduct(pName.value, pPrice.valueAsNumber, pWeight.valueAsNumber, pIsKosher.checked, pManufacturerName.value, new Date(pExeDate.value));
     
     productsArr.push(product);
     console.log(productsArr);
@@ -116,36 +126,8 @@ function getTD(value) {
     return td;
 }
 
-function checkExpirationDate(productDate) {
-    if (!productDate) return;
-
-    let result;
-    const date = new Date();
-    const year = date.getFullYear();
-    const mon = date.getMonth() + 1;
-    const day = date.getDate();
-
-    const productDateArr = productDate.split('-');
-    const productYear = productDateArr[0];
-    const productMon = productDateArr[1].startsWith('0') ? productDateArr[1].replace('0', '') : productDateArr[1];
-    const productDay = productDateArr[2].startsWith('0') ? productDateArr[2].replace('0', '') : productDateArr[2];
-
-    switch(true) {
-        case Number(productYear) < year : { result = 'Product Expire' } break;
-        case Number(productYear) > year : { result = 'The Product Has Not Expired' } break;
-        case Number(productMon) < mon : { result = 'Product Expire' } break;
-        case Number(productMon) > mon : { result = 'The Product Has Not Expired' } break;
-        case Number(productDay) < day : { result = 'Product Expire' } break;
-        case Number(productDay) >= day : { result = 'The Product Has Not Expired' } break;
-        default: break;
-    }
-    return result;
-};
-
 function drawOption(product, currentContainerName) {
     const currentContainer = document.getElementById(currentContainerName);
-    const checkPricePerKiloBtn = document.getElementById('checkPricePerKilo')
-    checkPricePerKiloBtn.addEventListener('click', () => { product.getPriceForUnit() })
 
     const option = document.createElement('option');
     option.innerText = product.getName();
@@ -153,30 +135,36 @@ function drawOption(product, currentContainerName) {
     currentContainer.append(option);
 }
 
-function drawPriceForUnit(result) {
-    if(!result) return;
-
+function checkPriceForUnit() {
     const container = document.getElementById('perKiloContainer');
-    container.innerText = `${result} ILS`;
+    const selectValue: any = document.querySelector('#perKiloOptions');
+    const optionValue = selectValue.options[selectValue.selectedIndex].text;
+
+    const currentObj = findObjectInArrayByName(optionValue)
+    const result = currentObj.getPriceForUnit();
+
+    container.innerText = result ? `${result.toFixed(2)} ILS` : "Unknown Price Or Weight";
 }
 
 function checkWhosMoreExpensive() {
-    let result;
+
     const container = document.getElementById('moreExContainer');
-    const select1 = document.getElementById('moreExOptions1');
-    const select2 = document.getElementById('moreExOptions2');
+    const select1: any = document.getElementById('moreExOptions1');
+    const select2: any = document.getElementById('moreExOptions2');
     const optionValue1 = select1.options[select1.selectedIndex].text;
     const optionValue2 = select2.options[select2.selectedIndex].text;
-    
-    const objOne = productsArr.find((productObj) => { return productObj.name === optionValue1; })
-    const objTwo = productsArr.find((productObj) => { return productObj.name === optionValue2; })
+
+    const objOne = findObjectInArrayByName(optionValue1)
+    const objTwo = findObjectInArrayByName(optionValue2)
+
     if (isNaN(objOne.price) || isNaN(objTwo.price)) return;
 
-    switch(true) {
-        case objOne.price == objTwo.price : {result = `${objOne.name} And ${objTwo.name} Are Equal in Price !`} break;
-        case objOne.price > objTwo.price : {result = `${objOne.name} is more Expensive then ${objTwo.name}`} break;
-        case objOne.price < objTwo.price : {result = `${objTwo.name} is more Expensive then ${objOne.name}`} break;
-        default: break;
-    }
-    container.innerText = result;
+    const result = FoodProduct.returnWhosMoreExpensive(objOne, objTwo)
+    container.innerText = `${result} is more Expensive`;
+}
+
+function findObjectInArrayByName(productName: string) {
+    const theRequestedObject = productsArr.find((productObj) => { return productObj.name === productName; })
+
+    return theRequestedObject;
 }
